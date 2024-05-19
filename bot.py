@@ -1,7 +1,7 @@
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from aiogram import Bot, Dispatcher, F
-from aiogram.filters import CommandStart
+from aiogram.filters import CommandStart, Command
 from aiogram.types import Message, CallbackQuery
 from aiogram.utils.media_group import MediaGroupBuilder
 from keyboards import *
@@ -41,30 +41,14 @@ class Review(StatesGroup):
 class Location(StatesGroup):
     region = State()
 
+class Faq(StatesGroup):
+    num = State()
+
+class Story(StatesGroup):
+    msg = State()
+
 dp = Dispatcher()
 bot = Bot(token=config_1.TOKEN)
-
-# @dp.message(F.photo)
-# async def photo_handler(message: Message) -> None:
-#     photo_data = message.photo[-1]
-#     await message.answer(f'{photo_data}')
-
-# @dp.message(F.video)
-# async def photo_handler(message: Message) -> None:
-#     photo_data = message.video
-#     await message.answer(f'{photo_data}')
-
-# @dp.message(F.document)
-# async def photo_handler(message: Message) -> None:
-#     photo_data = message.document
-
-#     await message.answer(f'{photo_data}')
-
-# @dp.message(F.voice)
-# async def photo_handler(message: Message) -> None:
-#     photo_data = message.voice.file_id
-
-#     await message.answer(f'{photo_data}')
 
 @dp.message(CommandStart())
 async def cmd_start(message: Message, reg = False) -> None:
@@ -186,7 +170,7 @@ async def reg_final(callback: CallbackQuery, state: FSMContext):
 
 @dp.callback_query(F.data == "Узнать больше")
 async def learn_more(callback: CallbackQuery) -> None:
-    await callback.message.answer(text="Мы можем предложить следующую помощь", reply_markup=give_service_kb())
+    await callback.message.answer_photo(photo=picture_photo, reply_markup=give_service_kb())
 
 @dp.callback_query(F.data == "Экстренная помощь")
 async def fast_help(callback: CallbackQuery) -> None:
@@ -195,10 +179,6 @@ async def fast_help(callback: CallbackQuery) -> None:
 @dp.callback_query(F.data == "Узнать больше о раке груди")
 async def learn_more_cancer(callback: CallbackQuery) -> None:
     await callback.message.answer(text=learn_more_text, reply_markup=learn_more_kb())
-
-@dp.callback_query(F.data == "Связь с Фондом")
-async def connect_with_found(callback: CallbackQuery) -> None:
-    await callback.message.answer(text=found_text, reply_markup=found_kb())
 
 @dp.callback_query(F.data == "Как сохранить здоровье груди")
 async def check_list(callback: CallbackQuery) -> None:
@@ -264,10 +244,17 @@ async def register_age(message: Message, state: FSMContext) -> None:
 
 @dp.message(Form.problem)
 async def registe_file(message: Message, state: FSMContext) -> None:
-    await state.update_data(problem=message.text)
+    data = await state.get_data()
+    if data.get("doctor") in ["Психолога", "Мед.юриста", "Сотрудника фонда"]:
+        await message.answer(text="3/3 | Заявка сформирована. Нажми завершить", reply_markup=skip_kb())
+    else:
+        await state.set_state(Form.media)    
+        await message.answer(text="3/3 | Загрузите по одному документы в формате pdf имеющиеся у вас: выписной эпикриз, описание ИГХ, описание УЗИ и Маммографии", reply_markup=skip_kb())
+    
     await state.update_data(media='')
-    await state.set_state(Form.media)
-    await message.answer(text="3/3 | Загрузите по одному документы в формате pdf имеющиеся у вас: выписной эпикриз, описание ИГХ, описание УЗИ и Маммографии", reply_markup=skip_kb())
+    await state.update_data(problem=message.text)
+ 
+
 
 @dp.message(Form.media)
 async def set_photo(message: Message, state: FSMContext) -> None:
@@ -302,11 +289,11 @@ async def send_sign_call(callback: CallbackQuery, state: FSMContext) -> None:
             media.add_document(media=i)
     await bot.send_message(chat_id=chat_id,
                            text=f"Пользователь: @{username}\nОставил заявку на консультацию у {doctor}\nФИО: {fio}\nНомер телефона: {number} \nВозраст: {age}\nПроблема: {problem}",
-                           reply_markup=answer_kb(callback.message.from_user.id))
+                           reply_markup=answer_kb(callback.from_user.id))
     if data.get("media") != "":
         await bot.send_message(chat_id=chat_id, text="Приложенные файлы")
         await bot.send_media_group(chat_id=chat_id, media=media.build())
-    await callback.message.answer("Спасибо за обращение! Вам скоро напишут")
+    await callback.message.answer(text="Спасибо за обращение! Вам скоро напишут", reply_markup=back_kb())
     await state.clear()
 
 @dp.callback_query(F.data.startswith("Ответить"))
@@ -336,7 +323,7 @@ async def im_shure(callback: CallbackQuery, state: FSMContext) -> None:
     await callback.message.answer(text="Сообщение не отправлено")
     await state.clear()
 
-@dp.callback_query(F.data == "Оставить отзыв о работе Фонда")
+@dp.callback_query(F.data == "Оставить отзыв о Фонде")
 async def review(callback: CallbackQuery, state: FSMContext) -> None:
     await state.set_state(Review.age)
     await callback.message.answer(text=review_text)
@@ -379,7 +366,7 @@ async def review_review(message: Message, state: FSMContext):
     cursor.execute(f'''INSERT INTO "review" (tg_id, first_name, last_name, second_nam, age, city, mark, text) VALUES ('{message.from_user.id}', '{first_name}', '{last_name}', '{second_name}', '{age}', '{city}', '{mark}', '{message.text}');''')
     connection.commit()
     await state.clear()
-    await message.answer(text="Спасибо за Ваш отзыв", reply_markup=give_service_kb())
+    await message.answer(text="Спасибо за Ваш отзыв", reply_markup=back_kb())
 
 @dp.callback_query(F.data == "Помочь Фонду")
 async def help_for_found(callback: CallbackQuery):
@@ -391,15 +378,11 @@ async def help_for_found(callback: CallbackQuery):
 
 @dp.callback_query(F.data == "Юр.лицо")
 async def help_for_found(callback: CallbackQuery):
-    await callback.message.answer(text="Как вы хотите помочь?", reply_markup=ur_kb())
+    await callback.message.answer(text="Для помощи от юридических лиц, пожалуйста, позвоните на номер - 8 (495) 5426717 или напишите на почту - moldovanova@dalshefond.ru", reply_markup=give_service_kb())
   
 @dp.callback_query(F.data == "Получить ссылку для друга")
 async def get_link(callback: CallbackQuery):
     await callback.message.answer(text="https://dalshefond.ru/donate/", reply_markup=give_service_kb())
-
-@dp.callback_query(F.data == "Связать с руководителем")
-async def get_link(callback: CallbackQuery):
-    await callback.message.answer(text="Позвоните по номер - 8 (495) 5426717 или напишите на почту - moldovanova@dalshefond.ru", reply_markup=give_service_kb())
 
 @dp.callback_query(F.data == "Получить помощь Фонда")
 async def help(callback: CallbackQuery):
@@ -407,7 +390,7 @@ async def help(callback: CallbackQuery):
 
 @dp.callback_query(F.data == "Пособие для пациентов")
 async def giude_pcient(callback: CallbackQuery):
-    await callback.message.answer_document(document=posobie_file)
+    await callback.message.answer_document(document=posobie_file, reply_markup=back_kb())
 
 @dp.callback_query(F.data == "Лечение по ОМС бесплатно")
 async def oms_free(callback: CallbackQuery):
@@ -423,7 +406,7 @@ async def where_clinic(callback: CallbackQuery, state: FSMContext):
     await callback.message.answer(text="Напишите название вашего региона")
 
 @dp.message(Location.region)
-async def clinic_region(message: Message):
+async def clinic_region(message: Message, state: FSMContext):
     connection = connect(config_1.POSTGRES_URL)
     cursor = connection.cursor()
     cursor.execute(f'''SELECT * FROM "clinic" WHERE region = '{message.text}';''')
@@ -431,4 +414,43 @@ async def clinic_region(message: Message):
     if region is None:
         await message.answer(text="Регион не найдет. Попробуйте перефразировать\nПримеры: Москва, Оренбургская область, республика Башкортостан")
     else:
-        await message.answer(text=f'{region[0]} - {region[1]}\n{region[2]}')
+        await message.answer(text=f'{region[0]} - {region[1]}\n{region[2]}', reply_markup=back_kb())
+        await state.clear()
+
+@dp.callback_query(F.data == "Школа пациента")
+async def faq(callback: CallbackQuery):
+    connection = connect(config_1.POSTGRES_URL)
+    cursor = connection.cursor()
+    cursor.execute('''SELECT question FROM "faq";''')
+    await callback.message.answer(text="Часто задаваемые вопросы:\n" + "\n".join([f'{count+1}) ' + i[0] for count, i in enumerate(cursor.fetchall())]))
+    await callback.message.answer(text="Нажмите на /question")
+
+@dp.message(Command('question'))
+async def answer(message: Message, state: FSMContext):
+    await state.set_state(Faq.num)
+    await message.answer(text="Введите номер вопроса")
+    
+@dp.message(Faq.num)
+async def answer_question(message: Message, state: FSMContext):
+    connection = connect(config_1.POSTGRES_URL)
+    cursor = connection.cursor()
+    num = message.text
+    try:
+        cursor.execute(f'''SELECT question, answer FROM "faq" WHERE faq_id = '{num}';''')
+        question, answer = cursor.fetchone()
+        await message.answer(text=f"Вопрос: {question}\nОтвет: {answer}")
+        await state.clear()
+    except:
+        await message.answer(text="Неверный номер вопроса. Попробуйте снова")
+    
+@dp.callback_query(F.data == 'Поделиться своим опытом')
+async def experience(callback: CallbackQuery, state: FSMContext):
+    await callback.message.answer(text="Напишите немного о своей истории, скоро с вами свяжутся и узнают поподробнее")
+    await state.set_state(Story.msg)
+
+@dp.message(Story.msg)
+async def experience2(message: Message, state: FSMContext):
+    await bot.send_message(chat_id='-4218092750', text=f'Пользователь @{message.from_user.username} хочет поделиться своей историей\nОписание: {message.text}')
+    await message.answer(text="Спасибо, скоро с вами свяжутся", reply_markup=back_kb())
+    await state.clear()
+    

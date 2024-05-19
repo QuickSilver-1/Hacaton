@@ -78,3 +78,10 @@ class Clinic(BaseModel):
     number = Column(String(30))
 
     query: sql.select
+
+class Faq(BaseModel):
+    __tablename__ = 'faq'
+
+    faq_id = Column(Integer(), primary_key=True, autoincrement=True)
+    question = Column(String(10000))
+    answer = Column(String(1000000))

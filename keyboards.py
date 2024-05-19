@@ -38,26 +38,16 @@ def give_service_kb():
         text="Получить помощь Фонда", callback_data="Получить помощь Фонда"
     )
     builder.button(
-        text="Психологическая поддержка", callback_data="Психологическая поддержка"
+        text="Школа пациента (F.A.Q)", callback_data="Школа пациента"
     )
     builder.button(
-        text="Связь с Фондом", callback_data="Связь с Фондом"
-    )
-
-    builder.adjust(1)
-    return builder.as_markup()
-
-def found_kb():
-    builder = InlineKeyboardBuilder()
-
-    builder.button(
-        text="Оставить отзыв о работе Фонда", callback_data="Оставить отзыв о работе Фонда"
-    )
-    builder.button(
-        text="Связь с сотрудником Фонда", callback_data="Соединить с сотрудником Фонда"
+        text="Оставить отзыв о Фонде", callback_data="Оставить отзыв о Фонде"
     )
     builder.button(
         text="Помочь Фонду", callback_data="Помочь Фонду"
+    )
+    builder.button(
+        text="Рассказать свою историю", callback_data="Поделиться своим опытом"
     )
 
     builder.adjust(1)
@@ -67,7 +57,7 @@ def learn_more_kb():
     builder = InlineKeyboardBuilder()
 
     builder.button(
-        text="Хочу получить помощь Фонда", callback_data="Узнать больше"
+        text="Вернуться в главное меню", callback_data="Узнать больше"
     )
     builder.button(
         text="Как сохранить здоровье груди", callback_data="Как сохранить здоровье груди"
@@ -77,12 +67,6 @@ def learn_more_kb():
     )
     builder.button(
         text="Как лечится рак груди", url="https://vmesteplus.ru/distance-programs/oncologist-course/"
-    )
-    builder.button(
-        text="Навигатор для пациента", callback_data="Навигатор для пациента"
-    )
-    builder.button(
-        text="Соединить с сотрудником Фонда", callback_data="Соединить с сотрудником Фонда"
     )
 
     builder.adjust(1)
@@ -108,6 +92,9 @@ def give_staff_kb():
     )
     builder.button(
         text="Сотрудник фонда", callback_data="Сотрудник фонда"
+    )
+    builder.button(
+        text="Вернуться в главное меню", callback_data="Узнать больше"
     )
 
     builder.adjust(2)
@@ -216,19 +203,6 @@ def fiz_kb():
     builder.adjust(1)
     return builder.as_markup()
 
-def ur_kb():
-    builder = InlineKeyboardBuilder()
-
-    builder.button(
-        text="Сделать пожертвование", web_app=WebAppInfo(url="https://dalshefond.ru/donate/")
-    )
-    builder.button(
-        text="Связать с руководителем", callback_data="Связать с руководителем"
-    )
-
-    builder.adjust(1)
-    return builder.as_markup()
-
 def help_for_found_kb():
     builder = InlineKeyboardBuilder()
 
@@ -242,13 +216,13 @@ def help_for_found_kb():
         text="Консультация мед. юриста", callback_data="Мед.юрист"
     )
     builder.button(
-        text="Школа пациента (F.A.Q)", callback_data="Школа пациент"
-    )
-    builder.button(
         text="Бесплатное такси к месту лечения", web_app=WebAppInfo(url="https://vmesteplus.ru/support/how/targeted-assistance/")
     )
     builder.button(
         text="Связь с сотрудником Фонда", callback_data="Соединить с сотрудником Фонда"
+    )
+    builder.button(
+        text="Вернуться в главное меню", callback_data="Узнать больше"
     )
 
     builder.adjust(1)
@@ -264,14 +238,18 @@ def oms_kb():
         text="Где пройти обследование", callback_data="Где пройти обследование"
     )
     builder.button(
-        text="Помочь Фонду", callback_data="Помочь Фонду"
-    )
-    builder.button(
-        text="На главную", callback_data="Узнать больше"
+        text="Вернуться на главную", callback_data="Узнать больше"
     )
 
     builder.adjust(1)
     return builder.as_markup()
+
+def back_kb():
+    builder = InlineKeyboardBuilder()
+
+    builder.button(
+        text="Вернуться в главное меню", callback_data="Узнать больше"
+    )
 
 def visit_kb():
     builder = InlineKeyboardBuilder()
