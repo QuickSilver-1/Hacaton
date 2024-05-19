@@ -438,7 +438,7 @@ async def answer_question(message: Message, state: FSMContext):
     try:
         cursor.execute(f'''SELECT question, answer FROM "faq" WHERE faq_id = '{num}';''')
         question, answer = cursor.fetchone()
-        await message.answer(text=f"Вопрос: {question}\nОтвет: {answer}")
+        await message.answer(text=f"Вопрос: {question}\n\nОтвет: {answer}")
         await state.clear()
     except:
         await message.answer(text="Неверный номер вопроса. Попробуйте снова")
