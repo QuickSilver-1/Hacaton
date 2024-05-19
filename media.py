@@ -6,8 +6,11 @@ help_txt = "ЕСЛИ ВАМ НУЖНА СРОЧНАЯ ПОМОЩЬ, ЗВОНИТ
 checklist_text = "Вот Ваш чек-лист по анализу риска рака"
 found_text = "Варианты взаимодействия с Фондом"
 staff_text = "Какой врач вас интересует"
-
+learn_more_text = "Вот, что мы можем предложить по этому запросу"
+review_text = "Спасибо, что помогаете нам становиться лучше. Напишите свой возраст"
+oms_text = '''Как получить услугу? Для получения лечения онкологии по полису ОМС пациент должен обратиться к своему лечащему врачу. Доктор оформляет выписку из амбулаторной карты и направление на госпитализацию по форме Ф. 057-у\nТакже можете обратиться к онкологу в нашей клинике'''
 
 start_photo = "AgACAgIAAxkBAAMlZkiije2FXTmqQKUSEZn5cSTVuQcAAoDaMRvJrklK5jy0vM1gezEBAAMCAAN4AAM1BA"
 
 checklist_file = "BQACAgIAAxkBAAM2ZkiqwcB2y3xQQUBlgWMH_NE-X5IAAjpSAALJrklKptIYQC9Bd-E1BA"
+posobie_file = "BQACAgIAAxkBAAIEUWZJeSHDkthimEfR0zWXKbc3uHp9AAKWSAACENdJSgUy2DOrpWDuNQQ"

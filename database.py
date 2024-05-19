@@ -34,33 +34,47 @@ class Review(TimedBaseModel):
 
     review_id = Column(Integer(), primary_key=True, autoincrement=True)
     tg_id = Column(ForeignKey('person.tg_id'))
+    first_name = Column(String(50))
+    last_name = Column(String(50))
+    second_nam = Column(String(50))
     age = Column(String(10))
     city = Column(String(50))
+    mark = Column(String(10))
     text = Column(String(1000))
 
     query: sql.select
 
 class Person(TimedBaseModel):
     __tablename__ = 'person'
+    __table_args__ = {'extend_existing': True}
 
     username_tg = Column(String(100))
     first_name = Column(String(50))
     last_name = Column(String(50))
     second_name = Column(String(50))
-    email = Column(String(50), primary_key=True)
-    tg_id = Column(String(50))
+    email = Column(String(50))
+    tg_id = Column(String(50), primary_key=True)
     number = Column(String(50))
     username = Column(String(50))
-    password = Column(String(50))
+    password = Column(String(200))
 
     query: sql.select
 
 class Admin(TimedBaseModel):
-    __tablename__ = 'person'
+    __tablename__ = 'admin'
 
     username = Column(String(100))
     first_name = Column(String(50))
     last_name = Column(String(50))
     tg_id = Column(String(50), primary_key=True)
+
+    query: sql.select
+
+class Clinic(BaseModel):
+    __tablename__ = 'clinic'
+
+    region = Column(String(1000))
+    link = Column(String(1000))
+    number = Column(String(30))
 
     query: sql.select

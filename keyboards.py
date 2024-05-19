@@ -2,8 +2,6 @@ from aiogram.types import KeyboardButton, ReplyKeyboardMarkup
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from media import *
 from aiogram.types import WebAppInfo
-from psycopg2 import connect
-from json import dumps
 
 
 main_reply_kb = ReplyKeyboardMarkup(keyboard=[
@@ -31,7 +29,7 @@ def give_service_kb():
         text="Узнать больше о раке груди", callback_data="Узнать больше о раке груди"
     )
     builder.button(
-        text="Мнение врача", callback_data="Мнение врача"
+        text="Мнение врача", callback_data="Онколог"
     )
     builder.button(
         text="Лечение по ОМС бесплатно", callback_data="Лечение по ОМС бесплатно"
@@ -56,7 +54,7 @@ def found_kb():
         text="Оставить отзыв о работе Фонда", callback_data="Оставить отзыв о работе Фонда"
     )
     builder.button(
-        text="Связь с сотрудником Фонда", callback_data="Связь с сотрудником Фонда"
+        text="Связь с сотрудником Фонда", callback_data="Соединить с сотрудником Фонда"
     )
     builder.button(
         text="Помочь Фонду", callback_data="Помочь Фонду"
@@ -109,7 +107,7 @@ def give_staff_kb():
         text="Дерматолог", callback_data="Дерматолог"
     )
     builder.button(
-        text="Сотрудник фонда", callback_data="Онколог"
+        text="Сотрудник фонда", callback_data="Сотрудник фонда"
     )
 
     builder.adjust(2)
@@ -148,6 +146,9 @@ def have_acc_kb():
         text="Нет", callback_data="Нету"
     )
 
+    builder.adjust(2)
+    return builder.as_markup()
+
 def sign_in_kb():
     builder = InlineKeyboardBuilder()
 
@@ -158,11 +159,128 @@ def sign_in_kb():
     builder.adjust(1)
     return builder.as_markup()
 
+def sign_up_kb():
+    builder = InlineKeyboardBuilder()
+
+    builder.button(
+        text="Зарегестрироваться", callback_data="Нету"
+    )
+
+    builder.adjust(1)
+    return builder.as_markup()
+
+
 def password_kb():
     builder = InlineKeyboardBuilder()
 
     builder.button(
         text="Запомнил", callback_data="Запомнил"
+    )
+
+    builder.adjust(1)
+    return builder.as_markup()
+
+def skip_kb():
+    builder = InlineKeyboardBuilder()
+
+    builder.button(
+        text="Закончить", callback_data="Пропустить"
+    )
+
+    builder.adjust(1)
+    return builder.as_markup()
+
+def who_are_you_kb():
+    builder = InlineKeyboardBuilder()
+
+    builder.button(
+        text="Физ.лицо", callback_data="Физ.лицо"
+    )
+    builder.button(
+        text="Юр.лицо", callback_data="Юр.лицо"
+    )
+
+    builder.adjust(2)
+    return builder.as_markup()
+
+def fiz_kb():
+    builder = InlineKeyboardBuilder()
+
+    builder.button(
+        text="Сделать пожертвование", web_app=WebAppInfo(url="https://dalshefond.ru/donate/")
+    )
+    builder.button(
+        text="Получить ссылку для друга", callback_data="Получить ссылку для друга"
+    )
+
+    builder.adjust(1)
+    return builder.as_markup()
+
+def ur_kb():
+    builder = InlineKeyboardBuilder()
+
+    builder.button(
+        text="Сделать пожертвование", web_app=WebAppInfo(url="https://dalshefond.ru/donate/")
+    )
+    builder.button(
+        text="Связать с руководителем", callback_data="Связать с руководителем"
+    )
+
+    builder.adjust(1)
+    return builder.as_markup()
+
+def help_for_found_kb():
+    builder = InlineKeyboardBuilder()
+
+    builder.button(
+        text="Пособие для пациентов", callback_data="Пособие для пациентов"
+    )
+    builder.button(
+        text="Консультация психолога", callback_data="Психолог"
+    )
+    builder.button(
+        text="Консультация мед. юриста", callback_data="Мед.юрист"
+    )
+    builder.button(
+        text="Школа пациента (F.A.Q)", callback_data="Школа пациент"
+    )
+    builder.button(
+        text="Бесплатное такси к месту лечения", web_app=WebAppInfo(url="https://vmesteplus.ru/support/how/targeted-assistance/")
+    )
+    builder.button(
+        text="Связь с сотрудником Фонда", callback_data="Соединить с сотрудником Фонда"
+    )
+
+    builder.adjust(1)
+    return builder.as_markup()
+
+def oms_kb():
+    builder = InlineKeyboardBuilder()
+
+    builder.button(
+        text="Как попасть к онкологу", callback_data="Как попасть к онкологу"
+    )
+    builder.button(
+        text="Где пройти обследование", callback_data="Где пройти обследование"
+    )
+    builder.button(
+        text="Помочь Фонду", callback_data="Помочь Фонду"
+    )
+    builder.button(
+        text="На главную", callback_data="Узнать больше"
+    )
+
+    builder.adjust(1)
+    return builder.as_markup()
+
+def visit_kb():
+    builder = InlineKeyboardBuilder()
+
+    builder.button(
+        text="Записаться к онкологу", callback_data="Онколог"
+    )
+    builder.button(
+        text="В главное меню", callback_data="Узнать больше"
     )
 
     builder.adjust(1)
